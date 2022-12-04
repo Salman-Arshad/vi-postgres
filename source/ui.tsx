@@ -1,34 +1,54 @@
 import React, { useState, useEffect } from "react";
-import { render, Text, Box, useInput ,useApp} from "ink";
+import { render, Text, Box, useInput, useApp, Spacer, Newline } from "ink";
+import Divider from "ink-divider";
+import Table from "ink-table";
+
+// import * as terminalImage from 'term-img';
+import logo from "./logo.png";
+import { closeConnection, getData } from "./utils/database";
 
 export const Counter = () => {
-	const {exit} = useApp()
+	const [rows, setRos] = useState(process.stdout.rows);
+	const [cols, setCols] = useState(process.stdout.columns);
+	const [data, setData] = useState(null);
+
+	const { exit } = useApp();
 	const [counter, setCounter] = useState(0);
 	// console.log(2)
-	const _UserInput = () => {
-		useInput((input, key) => {
-			// console.log({input,key});
-			if (input === 'q') {
-				exit()
-				// Exit program
-			}
+	useInput((input, key) => {
+		// console.log({input,key});
+		if (input === "q") {
+			closeConnection()
+			exit();
+			// Exit program
+		}
 
-			if (key.leftArrow) {
-				// Left arrow key pressed
-			}
+		if (key.leftArrow) {
+			// Left arrow key pressed
+		}
+	});
+
+	useEffect(() => {
+		const enterAltScreenCommand = "\x1b[?1049h";
+		const leaveAltScreenCommand = "\x1b[?1049l";
+		process.stdout.write(enterAltScreenCommand);
+		process.on("exit", () => {
+			process.stdout.write(leaveAltScreenCommand);
+		});
+		getData().then(setData);
+		process.stdout.on("resize", () => {
+			setCols(process.stdout.columns);
+			setRos(process.stdout.rows);
 		});
 
-		return
-	};
-	useEffect(() => {
-		const timer = setInterval(() => {
-			setCounter((previousCounter) => previousCounter + 1);
-			clearInterval(timer)
-			// clearInterval(timer);
-		}, 100);
+		// const timer = setInterval(() => {
+		// 	setCounter((previousCounter) => previousCounter + 1);
+		// 	clearInterval(timer);
+		// 	// clearInterval(timer);
+		// }, 100);
 
 		return () => {
-			clearInterval(timer);
+			// clearInterval(timer);
 		};
 	}, []);
 
@@ -38,12 +58,16 @@ export const Counter = () => {
 				justifyContent="center"
 				// alignSelf="center"
 				width="100%"
-				height={10}
-				borderStyle="bold"
+				height={rows}
+				borderStyle="classic"
 				borderColor="cyanBright"
 			>
 				{/* <Box marginLeft={20}> */}
-				<Text color="green">{counter} tests passed</Text>
+				{/* {terminalImage(logo)} */}
+
+				{/* <Text color="green">{counter} tests passed</Text> */}
+				{data ? <Table data={data} padding={6} /> : <Text></Text>}
+
 				{/* </Box> */}
 			</Box>
 		</>
@@ -57,3 +81,5 @@ export const Counter = () => {
 // });
 
 render(<Counter />);
+
+// syncttiom

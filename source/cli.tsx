@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // import React from 'react';
-// import {render} from 'ink';
+import {render} from 'ink';
 // import meow from 'meow';
 import {Counter} from './ui';
 
@@ -22,4 +22,4 @@ import {Counter} from './ui';
 // 	}
 // });
 
-// render(<Counter />);
+render(<Counter />);
