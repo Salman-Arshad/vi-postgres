@@ -2,30 +2,44 @@ import React, { useState, useEffect } from "react";
 import { render, Text, Box, useInput, useApp, Spacer, Newline } from "ink";
 import Divider from "ink-divider";
 import Table from "ink-table";
+import TextInput from "ink-text-input";
 
 // import * as terminalImage from 'term-img';
 import logo from "./logo.png";
 import { closeConnection, getData } from "./utils/database";
 
 export const Counter = () => {
+	const CustomCell = ({ children }: React.PropsWithChildren<{}>) => (
+		<Text wrap="wrap" color="cyan">
+			{children}
+		</Text>
+	);
+	const CustomSkeleton = ({ children }: React.PropsWithChildren<{}>) => (
+		<Text color="green">{children}</Text>
+	);
+	const [query, setQuery] = useState("");
 	const [rows, setRos] = useState(process.stdout.rows);
 	const [cols, setCols] = useState(process.stdout.columns);
 	const [data, setData] = useState(null);
+	const [ready, setReady] = useState(0);
+
+	// const [, set] = useState(second)
 
 	const { exit } = useApp();
 	const [counter, setCounter] = useState(0);
 	// console.log(2)
-	useInput((input, key) => {
+	useInput((input, _key) => {
 		// console.log({input,key});
 		if (input === "q") {
-			closeConnection()
+			closeConnection();
 			exit();
 			// Exit program
 		}
 
-		if (key.leftArrow) {
-			// Left arrow key pressed
-		}
+		// if (input === "e") {
+
+		// 	// Left arrow key pressed
+		// }
 	});
 
 	useEffect(() => {
@@ -35,6 +49,7 @@ export const Counter = () => {
 		process.on("exit", () => {
 			process.stdout.write(leaveAltScreenCommand);
 		});
+		setReady(1);
 		getData().then(setData);
 		process.stdout.on("resize", () => {
 			setCols(process.stdout.columns);
@@ -54,22 +69,39 @@ export const Counter = () => {
 
 	return (
 		<>
-			<Box
-				justifyContent="center"
-				// alignSelf="center"
-				width="100%"
-				height={rows}
-				borderStyle="classic"
-				borderColor="cyanBright"
-			>
-				{/* <Box marginLeft={20}> */}
-				{/* {terminalImage(logo)} */}
+			{ready ? (
+				<Box
+					justifyContent="center"
+					// alignSelf="center"
+					width="100%"
+					height={rows}
+					borderStyle="bold"
+					borderColor="cyanBright"
+				>
+					{/* <TextInput value={query} onChange={setQuery} /> */}
 
-				{/* <Text color="green">{counter} tests passed</Text> */}
-				{data ? <Table data={data} padding={6} /> : <Text></Text>}
+					{/* <Box marginLeft={20}> */}
+					{/* {terminalImage(logo)} */}
 
-				{/* </Box> */}
-			</Box>
+					{/* <Text color="green">{counter} 
+				tests passed</Text> */}
+					{data ? (
+						<Table
+							data={data}
+							// padding={10}
+							cell={CustomCell}
+							// columns={["first_name", "middle_name", "last_name"]}
+							skeleton = {CustomSkeleton}
+						/>
+					) : (
+						<Text></Text>
+					)}
+
+					{/* </Box> */}
+				</Box>
+			) : (
+				<Text>""</Text>
+			)}
 		</>
 	);
 };

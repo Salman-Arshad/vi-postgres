@@ -6,9 +6,9 @@ const initOptions = {
 const pgp = pg(initOptions);
 
 const cn = {
-	host: "drill",
+	host: "localhost",
 	port: 5432,
-	database: "defaultdb",
+	database: "vi",
 	user: "postgres",
 	password: "example",
 	max: 30, // use up to 30 connections
@@ -20,7 +20,7 @@ let db = pgp(cn);
 //  db.query("SELECT * FROM ldb.ldb_clients LIMIT 10;").then(console.log);
 
 export const getData = async () => {
-	return db.query("SELECT * FROM ldb.ldb_cron_job LIMIT 10;");
+	return db.query("SELECT * FROM ldb.ldb_lobbyists LIMIT 2;");
 };
 export const closeConnection = () => {
 	pgp.end();
