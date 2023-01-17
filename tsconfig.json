@@ -7,5 +7,5 @@
 		"noUnusedLocals": false,
 		"jsx": "react-jsx"
 	},
-	"include": ["source"]
+	"include": ["source", "test.js"]
 }

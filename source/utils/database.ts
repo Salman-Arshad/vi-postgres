@@ -1,4 +1,5 @@
 import pg from "pg-promise";
+import _ from "lodash";
 
 const initOptions = {
 	/* initialization options */
@@ -6,9 +7,9 @@ const initOptions = {
 const pgp = pg(initOptions);
 
 const cn = {
-	host: "localhost",
+	host: "20.55.111.251",
 	port: 5432,
-	database: "vi",
+	database: "defaultdb",
 	user: "postgres",
 	password: "example",
 	max: 30, // use up to 30 connections
