@@ -21,7 +21,12 @@ let db = pgp(cn);
 //  db.query("SELECT * FROM ldb.ldb_clients LIMIT 10;").then(console.log);
 
 export const getData = async () => {
-	return db.query("SELECT * FROM ldb.ldb_lobbyists LIMIT 2;");
+	try {
+
+		return await db.query("SELECT * FROM ldb.ldb_clients limit 200;");
+	} catch (e){
+		return [{error:e}]
+	}
 };
 export const closeConnection = () => {
 	pgp.end();

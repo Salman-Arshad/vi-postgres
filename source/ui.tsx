@@ -19,8 +19,10 @@ export const Counter = () => {
     const [query, setQuery] = useState("");
     const [rows, setRos] = useState(process.stdout.rows);
     const [cols, setCols] = useState(process.stdout.columns);
-    const [data, setData] = useState(null);
+    const [data, setData] = useState([]);
     const [ready, setReady] = useState(0);
+    const [dbCols, setDbCols] = useState([]);
+    const [debug, setDebug] = useState("");
 
     // const [, set] = useState(second)
 
@@ -43,10 +45,11 @@ export const Counter = () => {
         // }
     });
     useEffect(() => {
-		let str = rs.generate(cols-4)
-		setStr(str)
-	}, [cols, rows]);
+        let str = rs.generate(cols - 4);
+        setStr(str);
+    }, [cols, rows]);
     useEffect(() => {
+        // return;
         const enterAltScreenCommand = "\x1b[?1049h";
         const leaveAltScreenCommand = "\x1b[?1049l";
         process.stdout.write(enterAltScreenCommand);
@@ -70,6 +73,14 @@ export const Counter = () => {
             // clearInterval(timer);
         };
     }, []);
+    useEffect(() => {
+        if (data.length > 0) {
+            let keys = Object.keys(data[0] as any);
+            // console.log("hello");
+            setDebug(JSON.stringify(keys.slice(0, 2)));
+            setDbCols(keys.slice(0, 2) as any);
+        }
+    }, [data]);
 
     return (
         <>
@@ -81,12 +92,6 @@ export const Counter = () => {
                     height={rows}
                     borderStyle="bold"
                     borderColor="cyanBright">
-                    <Text>
-                       {str}
-                    </Text>
-					<Text>
-                       {str.length}
-                    </Text>
                     {/* <TextInput value={query} onChange={setQuery} /> */}
 
                     {/* <Box marginLeft={20}> */}
@@ -94,23 +99,24 @@ export const Counter = () => {
 
                     {/* <Text color="green">{counter}
 				tests passed</Text> */}
-                    {data && 0? (
+                    {data && data.length ? (
                         <Table
-                            data={data}
-                            // padding={10}
+                            data={data.slice(0,Math.ceil(rows/3))}
+                            padding={10}
                             cell={CustomCell}
                             // columns={["first_name", "middle_name", "last_name"]}
                             skeleton={CustomSkeleton}
-                            columns={["first_name", "middle_name", "last_name"]}
+                            columns={dbCols}
                         />
                     ) : (
-                        <Text></Text>
+                        <Text> Loading.......</Text>
                     )}
 
                     {/* </Box> */}
+                    <Text>{debug}</Text>
                 </Box>
             ) : (
-                <Text>""</Text>
+                <Text></Text>
             )}
         </>
     );
